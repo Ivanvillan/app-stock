@@ -107,7 +107,7 @@ $('#select-depots').change(function (e) {
                     <td> ${rows[i].Actualizado} </td>
                     <td>${rows[i].nombre}</td>
                     <td> ${observation} </td>
-                    <td><button id="detail" class="btn btn-primary btn-sm detail" data-toggle="modal" data-target="#modal-order"><i class="fas fa-sign-in-alt"></i></button></td>
+                    <td><button id="detail" class="btn btn-primary btn-sm detail"><i class="fas fa-sign-in-alt"></i></button></td>
                 </tr>`
                 );
             }    
