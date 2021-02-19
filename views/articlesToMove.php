@@ -55,7 +55,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <table id="table-articles-toMove" class="table table-hover">
+                            <table id="table-articles-toMove" class="table table-hover table-sm">
                                 <thead>
                                     <tr id="tr-toMove">
                                         <th scope="col">Nombre</th>

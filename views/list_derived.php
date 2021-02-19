@@ -80,7 +80,6 @@
                 });
                 $('#select-depots').change(function (e) {
                     if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-                        $("#table-delivered>tbody").load(" #table-delivered>tbody");
                     $.ajax({
                         type: "GET",
                         url: '/api-stock/public/index.php/movements/get/' + selectedDepots + '/all/delivered/all',
@@ -153,31 +152,34 @@
                         type: "GET",
                         url: '/api-stock/public/index.php/movements/get/' + selectedDepots + '/all/delivered/all',
                         dataType: "json",
-                        success: function (response) {
-                            console.log(response);
-                            $.each(response.result, function (i, item) { 
-                                var realized = item.Actualizado;
-                                var ended = item.Finalizado;
+                        success: function (data) {
+                            let rows = data.result;
+                            let html = [];
+                            for (let i=0; i < rows.length; i++){
+                                var realized = rows[i].Actualizado;
+                                var ended = rows[i].Finalizado;
                                 if (realized == null) {
                                     realized = 'Sin actualizar';
-                                }
-                                var row = `<tr class="content" idDelivered=${item.idRow}>
-                                    <td> ${item.Producto} </td> 
-                                    <td> ${item.marca} </td> 
-                                    <td> ${item.detalle} </td> 
-                                    <td> ${item.descripcion} </td>
-                                    <td> ${item.Identificador} </td>
-                                    <td> ${item.Descripcion} </td>
-                                    <td> ${item.Realizado} </td>
+                                } 
+                                html.push(
+                                `<tr class="content" idDelivered="${rows[i].idRow}">
+                                    <td> ${rows[i].Producto} </td> 
+                                    <td> ${rows[i].marca} </td> 
+                                    <td> ${rows[i].detalle} </td> 
+                                    <td> ${rows[i].descripcion} </td>
+                                    <td> ${rows[i].Identificador} </td>
+                                    <td> ${rows[i].Descripcion} </td>
+                                    <td> ${rows[i].Realizado} </td>
                                     <td> ${realized} </td>
-                                    <td> ${item.Finalizado} </td>
+                                    <td> ${rows[i].Finalizado} </td>
                                     <td> <button class='finalize-delivered btn btn-dark'> Finalizar </button> </td>
-                                    </tr>`;
-                            $('#table-delivered>tbody').append(row);
+                                </tr>`
+                                );
                                 if (ended == "Sí") {
                                     $('.finalize-delivered').attr("disabled", true);
                                 }
-                            });
+                            }    
+                            $('#table-delivered>tbody').html(html.join(''));
                             $('.finalize-delivered').click(function (e) { 
                                 e.preventDefault();
                                 var element = $(this)[0].parentElement.parentElement;

@@ -40,7 +40,7 @@
         </div>
         <div class="row">
             <div class="col">
-            <table id="table-notes" class="table table-hover">
+            <table id="table-notes" class="table table-hover table-sm">
                 <thead>
                     <tr>
                     <th scope="col">N° pedido</th>
@@ -86,12 +86,12 @@ if (userprofile != 1) {
 });
 $('#select-depots').change(function (e) {
     if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-        $("#table-notes>tbody").load(" #table-notes>tbody");
         $.ajax({
         type: "GET",
         url: "/api-stock/public/index.php/stock/order/get/" + selectedDepots + '/1' + '/all',
         dataType: "json",
         success: function (data) {
+            console.log(data);
             let rows = data.result;
             let html = [];
             for (let i=0; i < rows.length; i++){
@@ -176,12 +176,12 @@ $('.button-quit').remove();
 $('.button-quit-all').remove();
 $('#select-depots').change(function (e) {
     if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-        $("#table-notes>tbody").load(" #table-notes>tbody");
         $.ajax({
             type: "GET",
             url: "/api-stock/public/index.php/stock/order/get/" + selectedDepots + '/1' + '/all',
             dataType: "json",
             success: function (data) {
+                console.log(data);
                 let rows = data.result;
                 let html = [];
                 for (let i=0; i < rows.length; i++){

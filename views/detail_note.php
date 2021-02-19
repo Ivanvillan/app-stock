@@ -23,6 +23,12 @@
                         <h2>Detalle de pedido</h2>
                     </div>
                     <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col form-group col-md-6">
+                                <div class="btn btn-danger export-pdf">Exportar en PDF</div>
+                                <div class="btn btn-success export-excel">Exportar en Excel</div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col d-none delete-order-col">
                                 <div class="mb-2"><button class="btn btn-danger delete-order">Eliminar solicitud</button></div>
@@ -67,7 +73,10 @@
             </div>
         </div>
     </div>
-    <script>
+<script src="https://unpkg.com/jspdf@1.5.3/dist/jspdf.min.js"></script>
+<script src="https://unpkg.com/jspdf-autotable@3.5.3/dist/jspdf.plugin.autotable.js"></script>
+<script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+<script>
 var order = JSON.parse(window.localStorage.getItem("order"));
 var state = JSON.parse(window.localStorage.getItem("state"));
 var selectedDepots = JSON.parse(window.localStorage.getItem("selectedDepots"));
@@ -261,6 +270,27 @@ $(document).ready(function () {
                     window.location.reload();
                 }
             });
+        });
+        }
+    });
+    $('.export-pdf').click(function(event) {
+      var doc = new jsPDF()
+      doc.autoTable({ html: '#table-products' })
+      doc.save("TablaDetalleNota" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".pdf")
+    });
+    $('.export-excel').click(function(event) {
+        var table = $('#table-products');
+        if(table && table.length){
+
+        $(table).table2excel({
+        //exclude: ".noExl",
+        name: "TablaDetalleNota",
+        filename: "TablaDetalleNota" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".xls",
+        fileext: ".xls",
+        exclude_img: true,
+        exclude_links: true,
+        exclude_inputs: true,
+        preserveColors: false
         });
         }
     });

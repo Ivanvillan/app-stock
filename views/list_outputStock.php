@@ -85,7 +85,6 @@ var selectedDepots = "";
             });
             $('#select-depots').change(function (e) {
                 if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-                $("#table-sends>tbody").load(" #table-sends>tbody");
                 var dataTypes = "";
                 var priceItem = 0;
                 var cantItem = 0;
@@ -201,7 +200,6 @@ var selectedDepots = "";
             });
             $('#select-depots').change(function (e) {
                 if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-                $("#table-sends>tbody").load(" #table-sends>tbody");
                 $.ajax({
                     type: "GET",
                     url: '/api-stock/public/index.php/stock/sent/all/' + selectedDepots,

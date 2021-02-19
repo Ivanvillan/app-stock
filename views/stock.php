@@ -106,7 +106,7 @@ $(document).ready(function () {
     $('.export-pdf').click(function(event) {
       var doc = new jsPDF()
       doc.autoTable({ html: '#table-articles' })
-      doc.save("TablaMovimientos" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".pdf")
+      doc.save("TablaStock" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".pdf")
     });
     $('.export-excel').click(function(event) {
         var table = $('#table-articles');
@@ -114,8 +114,8 @@ $(document).ready(function () {
 
         $(table).table2excel({
         //exclude: ".noExl",
-        name: "TablaMovimientos",
-        filename: "TablaMovimientos" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".xls",
+        name: "TablaStock",
+        filename: "TablaStock" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".xls",
         fileext: ".xls",
         exclude_img: true,
         exclude_links: true,
@@ -165,7 +165,6 @@ function listStock(){
         });
         $('#select-depots').change(function (e) { 
         if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-            $("#table-articles>tbody").load(" #table-articles>tbody");
             var url = "/api-stock/public/index.php/stock/get/";
             var depots = selectedDepots + '/';
             var all = "all";
@@ -315,7 +314,6 @@ function listStock(){
         });
         $('#select-depots').change(function (e) { 
         if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-            $("#table-articles>tbody").load(" #table-articles>tbody");
             var url = "/api-stock/public/index.php/stock/get/";
             var depots = selectedDepots + '/';
             var all = "all";

@@ -126,6 +126,27 @@
 <script>
 $(document).ready(function () {
     priceChecked();
+    $("#select-depots").change(function(){
+        selectedDepots = $(this).children("option:selected").val();
+    });
+    $.ajax({
+        url: '/api-stock/public/index.php/depots/get/1/all/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data, textStatus, xhr) {
+            let rows = data.result;
+            let html = [];
+            for (let i=0; i < rows.length; i++){
+                html.push(
+                    `<option value="${rows[i].id}">${rows[i].nombre}</option>`
+                );
+            }    
+            $('#select-depots').html(html.join(''));
+            console.log(data)
+        },
+        error: function(xhr, textStatus, errorThrown) {
+        }
+    });
     $.ajax({
         type: "GET",
         url: "/api-stock/public/index.php/products/get/all/all",

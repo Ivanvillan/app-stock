@@ -80,36 +80,38 @@ var selectedDepots = "";
             });
             $('#select-depots').change(function (e) {
                 if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-                $("#table-maintenance>tbody").load(" #table-maintenance>tbody");
                 $.ajax({
                     type: "GET",
                     url: '/api-stock/public/index.php/movements/get/' + selectedDepots + '/all/maintenance/all',
                     dataType: "json",
-                    success: function (response) {
-                        console.log(response);
-                        $.each(response.result, function (i, item) {
-                            var realized = item.Actualizado;
-                            var ended = item.Finalizado;
+                    success: function (data) {
+                        let rows = data.result;
+                        let html = [];
+                        for (let i=0; i < rows.length; i++){
+                            var realized = rows[i].Actualizado;
+                            var ended = rows[i].Finalizado;
                             if (realized == null) {
                                 realized = 'Sin actualizar';
-                            }  
-                            var row = `<tr class="content" idMaintenance=${item.idRow}>
-                                <td> ${item.Producto} </td> 
-                                <td> ${item.marca} </td> 
-                                <td> ${item.detalle} </td> 
-                                <td> ${item.descripcion} </td>
-                                <td> ${item.Identificador} </td>
-                                <td> ${item.Descripcion} </td>
-                                <td> ${item.Realizado} </td>
-                                <td> ${realized} </td>
-                                <td> ${item.Finalizado} </td>
+                            } 
+                            html.push(
+                            `<tr class="tr-article content" idOrder="${rows[i].id}">
+                                <td>${rows[i].Producto}</td> 
+                                <td>${rows[i].marca}</td> 
+                                <td>${rows[i].detalle}</td> 
+                                <td>${rows[i].descripcion}</td>
+                                <td>${rows[i].Identificador}</td>
+                                <td>${rows[i].Descripcion}</td>
+                                <td>${rows[i].Realizado}</td>
+                                <td>${realized}</td>
+                                <td>${rows[i].Finalizado}</td>
                                 <td> <button class='finalize-maintenance btn btn-dark'> Finalizar </button> </td>
-                                </tr>`;
-                        $('#table-maintenance>tbody').append(row);
+                            </tr>`
+                            );
                             if (ended == "Sí") {
-                                    $('.finalize-maintenance').attr("disabled", true);
-                                }
-                        });
+                                $('.finalize-maintenance').attr("disabled", true);
+                            }
+                        }    
+                        $('#table-maintenance>tbody').html(html.join(''));
                         $('.finalize-maintenance').click(function (e) { 
                             e.preventDefault();
                             var element = $(this)[0].parentElement.parentElement;
@@ -145,36 +147,37 @@ var selectedDepots = "";
             });
             $('#select-depots').change(function (e) {
                 if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-                $("#table-maintenance>tbody").load(" #table-maintenance>tbody");
                 $.ajax({
                     type: "GET",
                     url: '/api-stock/public/index.php/movements/get/' + selectedDepots + '/all/maintenance/all',
                     dataType: "json",
-                    success: function (response) {
-                        console.log(response);
-                        $.each(response.result, function (i, item) { 
-                            var realized = item.Actualizado;
-                            var ended = item.Finalizado;
+                    success: function (data) {
+                        let rows = data.result;
+                        let html = [];
+                        for (let i=0; i < rows.length; i++){
+                            var realized = rows[i].Actualizado;
+                            var ended = rows[i].Finalizado;
                             if (realized == null) {
                                 realized = 'Sin actualizar';
                             } 
-                            var row = `<tr class="content" idMaintenance=${item.idRow}>
-                                <td> ${item.Producto} </td> 
-                                <td> ${item.marca} </td> 
-                                <td> ${item.detalle} </td> 
-                                <td> ${item.descripcion} </td>
-                                <td> ${item.Identificador} </td>
-                                <td> ${item.Descripcion} </td>
-                                <td> ${item.Realizado} </td>
-                                <td> ${realized} </td>
-                                <td> ${item.Finalizado} </td>
+                            html.push(
+                            `<tr class="tr-article content" idOrder="${rows[i].id}">
+                                <td>${rows[i].Producto}</td> 
+                                <td>${rows[i].marca}</td> 
+                                <td>${rows[i].detalle}</td> 
+                                <td>${rows[i].descripcion}</td>
+                                <td>${rows[i].Identificador}</td>
+                                <td>${rows[i].Descripcion}</td>
+                                <td>${rows[i].Realizado}</td>
+                                <td>${realized}</td>
+                                <td>${rows[i].Finalizado}</td>
                                 <td> <button class='finalize-maintenance btn btn-dark'> Finalizar </button> </td>
-                                </tr>`;
-                        $('#table-maintenance>tbody').append(row);
+                            </tr>`
+                            );
                             if (ended == "Sí") {
                                 $('.finalize-maintenance').attr("disabled", true);
                             }
-                        });
+                        }  
                         $('.finalize-maintenance').click(function (e) { 
                             e.preventDefault();
                             var element = $(this)[0].parentElement.parentElement;

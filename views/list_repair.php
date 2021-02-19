@@ -80,7 +80,6 @@ var selectedDepots = "";
             });
             $('#select-depots').change(function (e) {
                 if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-                $("#table-repair>tbody").load(" #table-repair>tbody");
                 $.ajax({
                     type: "GET",
                     url: '/api-stock/public/index.php/movements/get/' + selectedDepots + '/all/repair/all',
@@ -149,36 +148,38 @@ var selectedDepots = "";
             });
             $('#select-depots').change(function (e) {
                 if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-                $("#table-repair>tbody").load(" #table-repair>tbody");
                 $.ajax({
                     type: "GET",
                     url: '/api-stock/public/index.php/movements/get/' + selectedDepots + '/all/repair/all',
                     dataType: "json",
-                    success: function (response) {
-                        console.log(response);
-                        $.each(response.result, function (i, item) { 
-                            var realized = item.Actualizado;
-                            var ended = item.Finalizado;
+                    success: function (data) {
+                        let rows = data.result;
+                        let html = [];
+                        for (let i=0; i < rows.length; i++){
+                            var realized = rows[i].Actualizado;
+                            var ended = rows[i].Finalizado;
                             if (realized == null) {
                                 realized = 'Sin actualizar';
                             }  
-                            var row = `<tr class="content" idRepair=${item.idRow}>
-                                <td> ${item.Producto} </td> 
-                                <td> ${item.marca} </td> 
-                                <td> ${item.detalle} </td> 
-                                <td> ${item.descripcion} </td>
-                                <td> ${item.Identificador} </td>
-                                <td> ${item.Descripcion} </td>
-                                <td> ${item.Finalizado} </td>
-                                <td> ${item.Realizado} </td>
-                                <td> ${realized} </td>
-                                <td> <button class='finalize-repair btn btn-dark'> Finalizar </button> </td>
-                                </tr>`;
-                        $('#table-repair>tbody').append(row);
+                            html.push(
+                        `<tr class="content" idRepair="${rows[i].idRow}">
+                            <td> ${rows[i].Producto} </td> 
+                            <td> ${rows[i].marca} </td> 
+                            <td> ${rows[i].detalle} </td> 
+                            <td> ${rows[i].descripcion} </td>
+                            <td> ${rows[i].Identificador} </td>
+                            <td> ${rows[i].Descripcion} </td>
+                            <td> ${rows[i].Finalizado} </td>
+                            <td> ${rows[i].Realizado} </td>
+                            <td> ${realized} </td>
+                            <td> <button class='finalize-repair btn btn-dark'> Finalizar </button> </td>
+                        </tr>`
+                            );
                             if (ended == "Sí") {
                                 $('.finalize-repair').attr("disabled", true);
                             }
-                        });
+                        }    
+                        $('#table-repair>tbody').html(html.join(''));
                         $('.finalize-repair').click(function (e) { 
                             e.preventDefault();
                             var element = $(this)[0].parentElement.parentElement;

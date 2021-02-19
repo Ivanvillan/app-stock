@@ -44,10 +44,10 @@ if (isset($_SESSION['USER'])) {
                     </a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li>
-                            <a href="list_notes.php" class="list-order">Listado de pedidos</a>
+                            <a href="list_notes.php" class="list-order">Administrar pedidos</a>
                         </li>
                         <li id="newnote">
-                            <a href="new_note.php" class="new-nota">Crear nota de pedido</a>
+                            <a href="new_note.php" class="new-nota">Crear pedido</a>
                         </li>
                     </ul>
                 </li>

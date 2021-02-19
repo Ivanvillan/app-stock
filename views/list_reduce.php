@@ -77,7 +77,6 @@ $(document).ready(function () {
         });
         $('#select-depots').change(function (e) {
             if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-            $("#table-down>tbody").load(" #table-down>tbody");
                 $.ajax({
                 type: "GET",
                 url: '/api-stock/public/index.php/stock/report/' + selectedDepots + '/all/output/low',
@@ -120,7 +119,6 @@ $(document).ready(function () {
         });
         $('#select-depots').change(function (e) {
             if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
-            $("#table-down>tbody").load(" #table-down>tbody");
                 $.ajax({
                 type: "GET",
                 url: '/api-stock/public/index.php/stock/report/' + selectedDepots + '/all/output/low',
