@@ -86,7 +86,7 @@ var selectedMove = "";
     console.log(idElement);
     console.log(typeArticle);
     var urlItem = '/api-stock/public/index.php/stock/get/' + selectedDepots + '/' +  typeArticle + idElement;
-    var urlCodesAdmin = '/api-stock/public/index.php/stock/codes/' + selectedDepots + '/' +  typeArticle + idElement + '/0';
+    var urlCodesAdmin = '/api-stock/public/index.php/stock/codes/' + selectedDepots + '/' +  typeArticle + idElement + "/0";
     var urlCodesUser = '/api-stock/public/index.php/stock/codes/' + '1/' +  typeArticle + idElement + '1/' + selectedDepots;
     $.ajax({
         type: "GET",
@@ -120,8 +120,12 @@ var selectedMove = "";
         success: function (response) {
             console.log(response);
             $.each(response.result, function (i, item) { 
+                var identUse = item.identificador;
+                if (item.disponible != "SÍ") {
+                    identUse = identUse + " (Utilizado)"
+                }
                 var listCode = `
-                    <option value="${item.identificador}">${item.identificador}</option>`;
+                    <option value="${item.identificador}">${identUse}</option>`;
                 $('#move-codes').append(listCode);
             });
             }
@@ -168,8 +172,12 @@ var selectedMove = "";
         success: function (response) {
             console.log(response);
             $.each(response.result, function (i, item) { 
+                var identUse = item.identificador;
+                if (item.disponible != "SÍ") {
+                    identUse = identUse + " (Utilizado)"
+                }
                 var listCode = `
-                    <option value="${item.identificador}">${item.identificador}</option>`;
+                    <option value="${item.identificador}">${identUse}</option>`;
                 $('#move-codes').append(listCode);
             });
             }

@@ -59,7 +59,7 @@
         <div class="row">
             <div class="col">
             <div id="stock-depots">
-                <table id="table-articles" class="table table-hover">
+                <table id="table-articles" class="table table-sm table-hover">
                     <thead>
                         <tr>
                             <th scope="col">Nombre</th>
@@ -396,6 +396,7 @@ function listStock(){
                         result.items[i] = typeArticle + idElement;
                         i++;
                         window.localStorage.setItem("result", JSON.stringify(result));
+                        window.localStorage.setItem("selectedDepots", JSON.stringify(selectedDepots));
                         window.location.href ='../views/articlesToMove.php';
                     });
                     $('.moveDerive').click(function () { 

@@ -84,6 +84,7 @@
 <script src="https://unpkg.com/jspdf-autotable@3.5.3/dist/jspdf.plugin.autotable.js"></script>
 <script>
     var result = JSON.parse(window.localStorage.getItem("result"));
+    var selectedDepots = JSON.parse(window.localStorage.getItem("selectedDepots"));
     $(document).ready(function () {
         console.log(result)
         listToMove();
@@ -125,10 +126,6 @@
             }
         });
     }
-    var selectedDepots = "";
-    $("#select-depots").change(function(){
-        selectedDepots = $(this).children("option:selected").val();
-    });
     function addStock(){
         console.log('click');
         var cantArray = new Array();
@@ -146,7 +143,7 @@
         if ($('#buy').is(':checked')) {
             result.items.forEach(function (result, index){
                 var url = "/api-stock/public/index.php/stock/register/";
-                var depot = '1/'
+                var depot = selectedDepots + '/'
                 var typeArticle = result.split('/')[0] + '/';
                 var typeArticleCodes = result.split('/')[0];
                 var idArticle = result.split('/')[1];
@@ -186,7 +183,7 @@
         }else{
             result.items.forEach(function (result, index){
             var url = "/api-stock/public/index.php/stock/register/";
-            var depot = '1/';
+            var depot = selectedDepots + '/';
             var typeArticle = result.split('/')[0] + '/';
             var idArticle = result.split('/')[1];
             var typeMove = 'input';

@@ -17,27 +17,38 @@
     <?php include($_SERVER['DOCUMENT_ROOT'].'/app-stock/head/head.php') ?>
     <div class="container">
         <div class="row">
-            <div class="form-group my-4 col-md-4 select-depots">
-                <label for="inputState">Selecciona un pañol</label>
+            <div class="form-group col-md-6 select-depots">
+                <label for="inputState">Deposito solicitante</label>
                 <div class="form-group ">
                     <select class="form-control" name="" id="select-depots">
-                        <option value="">Selecciona un pañol</option>
+                        <option value="">Selecciona un deposito</option>
                     </select>
                 </div>
             </div>
-            <div class="form-group my-4 col-md-4">
-                <label for="inputState">Estado</label>
+            <div class="form-group col-md-6 depot-send">
+                <label for="inputState">Deposito proveedor</label>
                 <div class="form-group ">
-                    <select class="form-control" name="" id="">
-                        <option value="0">Selecciona un estado</option>
+                    <select class="form-control" name="" id="depot-send">
+                        <option value="">Selecciona un deposito</option>
                     </select>
                 </div>
-            </div>
-            <div class="form-group my-4 col-md-4">
-                <label for="inputSearch">Buscar pedido</label>
-                <input type="search" id="search" class="form-control" placeholder="Buscador">
             </div>
         </div>
+
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="inputState">Estado</label>
+                    <div class="form-group ">
+                        <select class="form-control" name="" id="">
+                            <option value="0">Selecciona un estado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputSearch">Buscar pedido</label>
+                    <input type="search" id="search" class="form-control" placeholder="Buscador">
+                </div>   
+            </div>
         <div class="row">
             <div class="col">
             <table id="table-notes" class="table table-hover table-sm">
@@ -48,8 +59,8 @@
                     <th scope="col">Estado</th>
                     <th scope="col">Fecha</th>
                     <th scope="col">Actualizado</th>
-                    <th scope="col">Responsable</th>
-                    <th scope="col">Observación</th>
+                    <th scope="col">Resp.</th>
+                    <th scope="col">Observ.</th>
                     <th scope="col">Ver</th>
                     </tr>
                 </thead>
@@ -61,15 +72,19 @@
     </div>
 </div>
 <script>
-var selectedDepots = "";
+var selectedDepotsOrigen = "";
+var selectedDepotsDestino = "";
 var state = "";
 $(document).ready(function () {
     $("#select-depots").change(function(){
-        selectedDepots = $(this).children("option:selected").val();
+        selectedDepotsOrigen = $(this).children("option:selected").val();
+    });
+    $("#depot-send").change(function(){
+        selectedDepotsDestino = $(this).children("option:selected").val();
     });
 if (userprofile != 1) {
     console.log('no es 1')
-    $('.table-depot').remove();
+    $('.depot-send').remove();
     $.ajax({
     url: '/api-stock/public/index.php/depots/get/user/' + userid,
     type: 'GET',
@@ -88,7 +103,7 @@ $('#select-depots').change(function (e) {
     if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
         $.ajax({
         type: "GET",
-        url: "/api-stock/public/index.php/stock/order/get/" + selectedDepots + '/1' + '/all',
+        url: "/api-stock/public/index.php/stock/order/get/" + selectedDepotsOrigen + '/1' + '/all',
         dataType: "json",
         success: function (data) {
             console.log(data);
@@ -102,6 +117,7 @@ $('#select-depots').change(function (e) {
                 html.push(
                 `<tr class="tr-article content" idOrder="${rows[i].id}">
                     <td> ${rows[i].id} </td> 
+                    <td> ${rows[i].Destino} </td> 
                     <td> ${rows[i].estado} </td> 
                     <td> ${rows[i].Realizado} </td> 
                     <td> ${rows[i].Actualizado} </td>
@@ -117,10 +133,10 @@ $('#select-depots').change(function (e) {
             e.preventDefault();
             var element = $(this)[0].parentElement.parentElement;
             var order = $(element).attr('idOrder');
-            state = $(this).parent().parent().find('td').eq(1).html();
+            state = $(this).parent().parent().find('td').eq(2).html();
             window.localStorage.setItem("order", JSON.stringify(order)); 
             window.localStorage.setItem("state", JSON.stringify(state)); 
-            window.localStorage.setItem("selectedDepots", JSON.stringify(selectedDepots));
+            window.localStorage.setItem("selectedDepotsOrigen", JSON.stringify(selectedDepotsOrigen));
             window.location.href ='../views/detail_note.php';
             });
         }
@@ -130,20 +146,34 @@ $('#select-depots').change(function (e) {
 }else{
     console.log('es 1')
     $.ajax({
-    url: '/api-stock/public/index.php/depots/get/2/all/all',
-    type: 'GET',
-    dataType: 'json',
-    success: function(data, textStatus, xhr) {
-        console.log(data)
-    $.each(data.result, function(index, item) {
-        var users = `<option value="${item.id}">${item.nombre}</option>`;
-        $('#select-depots').append(users);      
+        url: '/api-stock/public/index.php/depots/get/1/all/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data, textStatus, xhr) {
+            console.log(data)
+        $.each(data.result, function(index, item) {
+            var users = `<option value="${item.id}">${item.nombre}</option>`;
+            $('#depot-send').append(users);      
+        });
+        },
+        error: function(xhr, textStatus, errorThrown) {
+        }
     });
-    },
-    error: function(xhr, textStatus, errorThrown) {
-    }
-});
-$.ajax({
+    $.ajax({
+        url: '/api-stock/public/index.php/depots/get/2/all/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data, textStatus, xhr) {
+            console.log(data)
+        $.each(data.result, function(index, item) {
+            var users = `<option value="${item.id}">${item.nombre}</option>`;
+            $('#select-depots').append(users);      
+        });
+        },
+        error: function(xhr, textStatus, errorThrown) {
+        }
+    });
+    $.ajax({
         url: '/api-stock/public/index.php/depots/get/3/all/all',
         type: 'GET',
         dataType: 'json',
@@ -157,7 +187,7 @@ $.ajax({
         error: function(xhr, textStatus, errorThrown) {
         }
     });
-$.ajax({
+    $.ajax({
         url: '/api-stock/public/index.php/depots/get/4/all/all',
         type: 'GET',
         dataType: 'json',
@@ -178,7 +208,7 @@ $('#select-depots').change(function (e) {
     if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
         $.ajax({
             type: "GET",
-            url: "/api-stock/public/index.php/stock/order/get/" + selectedDepots + '/1' + '/all',
+            url: "/api-stock/public/index.php/stock/order/get/" + selectedDepotsOrigen + '/1' + '/all',
             dataType: "json",
             success: function (data) {
                 console.log(data);
@@ -192,7 +222,7 @@ $('#select-depots').change(function (e) {
                     html.push(
                     `<tr class="tr-article content" idOrder="${rows[i].id}">
                         <td> ${rows[i].id} </td> 
-                        <td> ${rows[i].Origen} </td> 
+                        <td> ${rows[i].Destino} </td> 
                         <td> ${rows[i].estado} </td> 
                         <td> ${rows[i].Realizado} </td> 
                         <td> ${rows[i].Actualizado} </td>
@@ -206,15 +236,20 @@ $('#select-depots').change(function (e) {
                 var dataCant = new Array();
                 $('.detail').click(function (e) { 
                     e.preventDefault();
-                    var element = $(this)[0].parentElement.parentElement;
-                    var order = $(element).attr('idOrder');
-                    state = $(this).parent().parent().find('td').eq(2).html();   
-                    console.log(selectedDepots);
-                    console.log(state);
-                    window.localStorage.setItem("order", JSON.stringify(order));
-                    window.localStorage.setItem("state", JSON.stringify(state)); 
-                    window.localStorage.setItem("selectedDepots", JSON.stringify(selectedDepots));
-                    window.location.href ='../views/detail_note.php';
+                        if (selectedDepotsOrigen.length == 0 || selectedDepotsDestino.length == 0){
+                            alert('Seleccione ambos depositos');
+                        } else{
+                            var element = $(this)[0].parentElement.parentElement;
+                            var order = $(element).attr('idOrder');
+                            state = $(this).parent().parent().find('td').eq(2).html();   
+                            console.log(selectedDepotsOrigen);
+                            console.log(state);
+                            window.localStorage.setItem("order", JSON.stringify(order));
+                            window.localStorage.setItem("state", JSON.stringify(state)); 
+                            window.localStorage.setItem("selectedDepotsOrigen", JSON.stringify(selectedDepotsOrigen));
+                            window.localStorage.setItem("selectedDepotsDestino", JSON.stringify(selectedDepotsDestino));
+                            window.location.href ='../views/detail_note.php';
+                        }
                     });
                 }
             });

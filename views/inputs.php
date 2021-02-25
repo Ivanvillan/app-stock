@@ -98,6 +98,13 @@
                 </div>
                 <div class="modal-body">
                         <div class="row mb-2">
+                            <div class="form-group col">
+                                <select class="form-control list-depots select-depots" id="select-depots">
+                                    <option value="0">Selecciona un depósito</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
                             <div class="col">
                                 <input type="number" class="form-control cant" placeholder="Cantidad">
                             </div>
@@ -141,7 +148,7 @@ $(document).ready(function () {
                     `<option value="${rows[i].id}">${rows[i].nombre}</option>`
                 );
             }    
-            $('#select-depots').html(html.join(''));
+            $('.select-depots').append(html.join(''));
             console.log(data)
         },
         error: function(xhr, textStatus, errorThrown) {
@@ -318,7 +325,7 @@ function priceChecked(){
 function sendArticle(){
     if ($('#price').is(':checked')){
         var url = "/api-stock/public/index.php/stock/register/";
-        var depot = '1/';
+        var depot = selectedDepots + '/';
         var typeMove = 'input';
         var cant = $('.cant').val();
         var price = $('.price').val();
@@ -355,7 +362,7 @@ function sendArticle(){
         });
     }else{
         var url = "/api-stock/public/index.php/stock/register/";
-        var depot = '1/';
+        var depot = selectedDepots + '/';
         var typeMove = 'input';
         var cant = $('.cant').val();
         var price = $('.price').val();

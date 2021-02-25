@@ -123,11 +123,12 @@
     var dataTypeArt = JSON.parse(window.localStorage.getItem("dataTypeArt"));
     var idProduct = JSON.parse(window.localStorage.getItem("idProduct"));
     var dataCant = JSON.parse(window.localStorage.getItem("dataCant"));
-    var selectedDepots = JSON.parse(window.localStorage.getItem("selectedDepots"));
+    var selectedDepotsOrigen = JSON.parse(window.localStorage.getItem("selectedDepotsOrigen"));
     var order = JSON.parse(window.localStorage.getItem("order"));
     var idDetPed = JSON.parse(window.localStorage.getItem("idDetPed"));
     var cantReal = JSON.parse(window.localStorage.getItem("cantReal"));
     var state = JSON.parse(window.localStorage.getItem("state"));
+    var selectedDepotsDestino = JSON.parse(window.localStorage.getItem("selectedDepotsDestino"));
     var selectedState = "";
     var selectedCode = "";
     var list = {items: []};
@@ -135,7 +136,7 @@
     $(document).ready(function () {
         console.log('tipo art: ' + dataTypeArt);
         console.log('cant: ' + dataCant);
-        console.log('depo:' + selectedDepots);
+        console.log('depo:' + selectedDepotsOrigen);
         console.log('orden: ' + order);
         console.log('det ped: ' + idDetPed);
         console.log('cant real:'+cantReal);
@@ -172,7 +173,7 @@
             var price = $('.price').val();
             var observation = $('.observation').val();
             var url = "/api-stock/public/index.php/stock/register/";
-            var depots = selectedDepots + '/';
+            var depots = selectedDepotsOrigen + '/';
             var typeArticle = dataTypeArt;
             var idArticle = idProduct;
             var typeMove = 'input';
@@ -241,7 +242,7 @@
                 var price = $('.price').val();
                 var observation = $('.observation').val();
                 var url = "/api-stock/public/index.php/stock/register/";
-                var depots = '1/';
+                var depots = selectedDepotsDestino + '/';
                 var typeArticle = dataTypeArt;
                 var idArticle = idProduct;
                 var typeMove = 'output';
@@ -293,7 +294,7 @@
                 var price = $('.price').val();
                 var observation = $('.observation').val();
                     var url = "/api-stock/public/index.php/stock/register/";
-                    var depots = '1/';
+                    var depots = selectedDepotsDestino + '/';
                     var typeArticle = dataTypeArt;
                     var idArticle = idProduct;
                     var typeMove = 'output';
@@ -362,7 +363,7 @@
     function listToMove(){
         if (userprofile != 1) {
         var url = "/api-stock/public/index.php/products/getbyid/";
-        var depots = selectedDepots + '/'
+        var depots = selectedDepotsDestino + '/'
         $.ajax({
             type: "GET",
             url: url + dataTypeArt + idProduct,
@@ -388,7 +389,7 @@
             }
         });
         }else{
-            var url = "/api-stock/public/index.php/stock/get/1/";
+            var url = "/api-stock/public/index.php/stock/get/" + selectedDepotsDestino + "/";
             $.ajax({
                 type: "GET",
                 url: url + dataTypeArt + idProduct,
@@ -449,7 +450,8 @@
                     var typeArticle = $(this).parent().parent().find('td').eq(3).html();
                     window.localStorage.setItem("typeArticle", JSON.stringify(typeArticle));
                     window.localStorage.setItem("idArticle", JSON.stringify(idArticle));
-                    window.localStorage.setItem("selectedDepots", JSON.stringify(selectedDepots));
+                    window.localStorage.setItem("selectedDepotsOrigen", JSON.stringify(selectedDepotsOrigen));
+                    window.localStorage.setItem("selectedDepotsDestino", JSON.stringify(selectedDepotsDestino));
                     window.location.href ='../views/code_liberate.php';
                 });
             }

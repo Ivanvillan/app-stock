@@ -17,10 +17,18 @@
                     <div class="card-body">
                         <div class="row">
                         <div class="form-group col-md-6">
-                            <label for="inputState">Elige el pañol que solicita los artículos</label>
+                            <label for="inputState">Elige el deposito origen</label>
                             <div class="form-group ">
-                                <select class="form-control" name="" id="select-depots">
-                                    <option value="0">Selecciona tu pañol</option>
+                                <select class="form-control" name="" id="select-depotsOrigen">
+                                    <option value="0">Origen</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputState">Elige el deposito destino</label>
+                            <div class="form-group ">
+                                <select class="form-control" name="" id="select-depotsDestino">
+                                    <option value="0">Destino</option>
                                 </select>
                             </div>
                         </div>
@@ -115,9 +123,13 @@
 <script>
 var list = [];
 $(document).ready(function () {
-    var selectedDepots = "";
-    $("#select-depots").change(function(){
-        selectedDepots = $(this).children("option:selected").val();
+    var selectedDepotsOrigen = "";
+    var selectedDepotsDestino = "";
+    $("#select-depotsOrigen").change(function(){
+        selectedDepotsOrigen = $(this).children("option:selected").val();
+    });
+    $("#select-depotsDestino").change(function(){
+        selectedDepotsDestino = $(this).children("option:selected").val();
     });
     $.ajax({
             url: '/api-stock/public/index.php/depots/get/user/' + userid,
@@ -127,7 +139,21 @@ $(document).ready(function () {
                 console.log(data)
             $.each(data.result, function(index, item) {
                 var users = `<option value="${item.id}">${item.nombre}</option>`;
-                $('#select-depots').append(users);      
+                $('#select-depotsOrigen').append(users);      
+            });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+            }
+        });
+    $.ajax({
+            url: '/api-stock/public/index.php/depots/get/1/all/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data, textStatus, xhr) {
+                console.log(data)
+            $.each(data.result, function(index, item) {
+                var users = `<option value="${item.id}">${item.nombre}</option>`;
+                $('#select-depotsDestino').append(users);      
             });
             },
             error: function(xhr, textStatus, errorThrown) {
@@ -155,40 +181,45 @@ $(document).ready(function () {
             }    
             $('#table-articles>tbody').html(html.join(''));
             $('input[id="article-check"]').click(function () { 
-                var typeArticle = "";
-                var url = "/api-stock/public/index.php/products/getbyid/"
-                var i = 0;
-                var cant = 0;
-                $("input[type=checkbox]:checked").each(function(){
-                    var article = $(this)[0].parentElement.parentElement;
-                    var idArticle = $(article).attr('idArticle');
-                    cant = $(this).parent().parent().find('input').val();
-                    typeArticle = $(this).parent().parent().find('td').eq(4).html();
-                    switch (typeArticle) {
-                    case 'Herramientas':
-                        typeArticle = "tools"
-                        break;
-                        case 'Equipos':
-                        typeArticle = "hardware"
-                        break;
-                        case 'Consumibles':
-                        typeArticle = "consumables"
-                        break;
-                        case 'Indumentaria':
-                        typeArticle = "dress"
-                        break;
-                }
-
-                    list[i] = {
-                        idProducto: idArticle,
-                        Tipo: typeArticle,
-                        Cantidad: cant 
+            if(selectedDepotsOrigen.length == 0 || selectedDepotsDestino.length == 0){
+                    alert('Seleccione ambos depositos');
+                    $('input[type=checkbox]').prop('checked', false)
+                } else{
+                    var typeArticle = "";
+                    var url = "/api-stock/public/index.php/products/getbyid/"
+                    var i = 0;
+                    var cant = 0;
+                    $("input[type=checkbox]:checked").each(function(){
+                        var article = $(this)[0].parentElement.parentElement;
+                        var idArticle = $(article).attr('idArticle');
+                        cant = $(this).parent().parent().find('input').val();
+                        typeArticle = $(this).parent().parent().find('td').eq(4).html();
+                        switch (typeArticle) {
+                        case 'Herramientas':
+                            typeArticle = "tools"
+                            break;
+                            case 'Equipos':
+                            typeArticle = "hardware"
+                            break;
+                            case 'Consumibles':
+                            typeArticle = "consumables"
+                            break;
+                            case 'Indumentaria':
+                            typeArticle = "dress"
+                            break;
                     }
-                    i++;
-                if ($("input[type=checkbox]:checked")) {
-                    $(this).parent().parent().find('input').prop( "disabled", true );
-                }
-            });
+
+                        list[i] = {
+                            idProducto: idArticle,
+                            Tipo: typeArticle,
+                            Cantidad: cant 
+                        }
+                        i++;
+                    if ($("input[type=checkbox]:checked")) {
+                        $(this).parent().parent().find('input').prop( "disabled", true );
+                    }
+                });
+            }
             console.log(list);
             });
         }
@@ -199,8 +230,8 @@ $(document).ready(function () {
         var url = "/api-stock/public/index.php/stock/order/create";
         var observation = $('.observation').val();
         var data = {data: {
-        Origen: selectedDepots,
-        Destino: 1,
+        Origen: selectedDepotsOrigen,
+        Destino: selectedDepotsDestino,
         idUsuario: userid, 
         Observacion: observation,
         items: list,

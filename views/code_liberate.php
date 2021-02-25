@@ -43,9 +43,9 @@
                                         <th>Nombre</th>
                                         <th>Marca</th>
                                         <th>Detalle</th>
-                                        <th>Identificador</th>
-                                        <th>Stock</th>
+                                        <th>Descripcion</th>
                                         <th>Identidicador</th>
+                                        <th>Stock</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,13 +82,14 @@
         </div>
     </div>
 <script>
-var selectedDepots = JSON.parse(window.localStorage.getItem("selectedDepots"));
+var selectedDepotsOrigen = JSON.parse(window.localStorage.getItem("selectedDepotsOrigen"));
+var selectedDepotsDestino = JSON.parse(window.localStorage.getItem("selectedDepotsDestino"));
 var idArticle = JSON.parse(window.localStorage.getItem("idArticle"));
 var typeArticle = JSON.parse(window.localStorage.getItem("typeArticle"));
 var codeInput = JSON.parse(window.localStorage.getItem("codeInput"));
 var returnCode = JSON.parse(window.localStorage.getItem("returnCode"));
 $(document).ready(function () {
-    console.log(selectedDepots);
+    console.log(selectedDepotsDestino);
     console.log(idArticle);
     console.log(typeArticle);
     console.log(codeInput);
@@ -107,9 +108,9 @@ $(document).ready(function () {
         typeArt = "dress/"
         break;
     }
-    var urlItem = '/api-stock/public/index.php/stock/get/' + '1' + '/' +  typeArt + idArticle;
-    var urlCodesAdmin = '/api-stock/public/index.php/stock/codes/' + '1' + '/' +  typeArt + idArticle + '/all';
-    var urlCodesUser = '/api-stock/public/index.php/stock/codes/' + '1/' +  typeArticle + idArticle + '1/' + selectedDepots;
+    var urlItem = '/api-stock/public/index.php/stock/get/' + selectedDepotsOrigen + '/' +  typeArt + idArticle;
+    var urlCodesAdmin = '/api-stock/public/index.php/stock/codes/' + selectedDepotsOrigen + '/' +  typeArt + idArticle + '/all';
+    var urlCodesUser = '/api-stock/public/index.php/stock/codes/' + selectedDepotsOrigen + '/' +  typeArt + idArticle + '1/' + selectedDepotsDestino;
     $.ajax({
     type: "GET",
     url: urlItem,
@@ -141,7 +142,7 @@ $('.sendCode').click(function () {
     var typeArticleCodes = typeArt.split('/')[0];
     var codeInput = $('input[name=code]').val();
     var dataCode = {
-        idalmacen: 1,
+        idalmacen: selectedDepotsOrigen,
         id: idArticle,
         tipo: typeArticleCodes,
         identificador: codeInput,
@@ -203,12 +204,12 @@ if (userprofile != 1) {
                     var idCode = $(code).attr('idCode');
                     $.ajax({
                         type: "POST",
-                        url: "/api-stock/public/index.php/stock/code/liberate/" + idCode + '/' + returnCode,
+                        url: "/api-stock/public/index.php/stock/code/liberate/" + idCode + '/' + selectedDepotsDestino,
                         dataType: "json",
                         success: function (response) {
                             $.ajax({
                                 type: "POST",
-                                url: "/api-stock/public/index.php/stock/code/attach/" + idCode + '/' + returnCode,
+                                url: "/api-stock/public/index.php/stock/code/attach/" + idCode + '/' + selectedDepotsDestino,
                                 dataType: "json",
                                 success: function (response) {
                                     console.log(response);
@@ -250,7 +251,7 @@ if (userprofile != 1) {
                     var idCode = $(code).attr('idCode');
                     $.ajax({
                         type: "POST",
-                        url: "/api-stock/public/index.php/stock/code/attach/" + idCode + '/' + selectedDepots,
+                        url: "/api-stock/public/index.php/stock/code/attach/" + idCode + '/' + selectedDepotsDestino,
                         dataType: "json",
                         success: function (response) {
                             console.log(response);
@@ -291,12 +292,12 @@ if (userprofile != 1) {
                     if (codeInput == 1) {
                         $.ajax({
                             type: "POST",
-                            url: "/api-stock/public/index.php/stock/code/liberate/" + idCode + '/' + selectedDepots,
+                            url: "/api-stock/public/index.php/stock/code/liberate/" + idCode + '/' + selectedDepotsDestino,
                             dataType: "json",
                             success: function (response) {
                                 $.ajax({
                                     type: "POST",
-                                    url: "/api-stock/public/index.php/stock/code/attach/" + idCode + '/' + selectedDepots,
+                                    url: "/api-stock/public/index.php/stock/code/attach/" + idCode + '/' + selectedDepotsDestino,
                                     dataType: "json",
                                     success: function (response) {
                                         console.log(response);
@@ -309,7 +310,7 @@ if (userprofile != 1) {
                     }else{
                         $.ajax({
                             type: "POST",
-                            url: "/api-stock/public/index.php/stock/code/liberate/" + idCode + '/' + selectedDepots,
+                            url: "/api-stock/public/index.php/stock/code/liberate/" + idCode + '/' + selectedDepotsDestino,
                             dataType: "json",
                             success: function (response) {
                                 console.log(response);

@@ -79,12 +79,13 @@
 <script>
 var order = JSON.parse(window.localStorage.getItem("order"));
 var state = JSON.parse(window.localStorage.getItem("state"));
-var selectedDepots = JSON.parse(window.localStorage.getItem("selectedDepots"));
-var selectedState = "";
+var selectedDepotsOrigen = JSON.parse(window.localStorage.getItem("selectedDepotsOrigen"));
+var selectedDepotsDestino = JSON.parse(window.localStorage.getItem("selectedDepotsDestino"));
 $(document).ready(function () {
     console.log(order);
     console.log(state);
-    console.log(selectedDepots);
+    console.log(selectedDepotsDestino);
+    console.log(selectedDepotsOrigen);
     var url = '/api-stock/public/index.php/stock/order/details/';
     var dataTypeArt = "";
     var dataCant = ""; 
@@ -232,8 +233,7 @@ $(document).ready(function () {
             }
             console.log(dataTypeArt)
             console.log(dataCant);
-            console.log(selectedDepots);
-            window.localStorage.setItem("selectedDepots", JSON.stringify(selectedDepots));
+            window.localStorage.setItem("selectedDepotsOrigen", JSON.stringify(selectedDepotsOrigen));
             window.localStorage.setItem("idProduct", JSON.stringify(idProduct));
             window.localStorage.setItem("dataTypeArt", JSON.stringify(dataTypes));
             window.localStorage.setItem("dataCant", JSON.stringify(dataCant));
@@ -241,6 +241,7 @@ $(document).ready(function () {
             window.localStorage.setItem("idDetPed", JSON.stringify(idDetPed));
             window.localStorage.setItem("cantReal", JSON.stringify(cantReal));
             window.localStorage.setItem("state", JSON.stringify(state));
+            window.localStorage.setItem("selectedDepotsDestino", JSON.stringify(selectedDepotsDestino));
             window.location.href ='../views/successNote.php';
         });
         $('.delete-order').click(function (e) { 

@@ -84,7 +84,8 @@
 <script src="https://unpkg.com/jspdf-autotable@3.5.3/dist/jspdf.plugin.autotable.js"></script>
 <script>
     var result = JSON.parse(window.localStorage.getItem("result"));
-    var selectedDepots = JSON.parse(window.localStorage.getItem("selectedDepots"));
+    var selectedDepotsOrigen = JSON.parse(window.localStorage.getItem("selectedDepotsOrigen"));
+    var selectedDepotsDestino = JSON.parse(window.localStorage.getItem("selectedDepotsDestino"));
     $(document).ready(function () {
         console.log(result)
         listToMove();
@@ -142,7 +143,7 @@
         if ($('#buy').is(':checked')) {
         result.items.forEach(function (result, index){
             var url = "/api-stock/public/index.php/stock/register/";
-            var depot = '1/'
+            var depot = selectedDepotsOrigen + '/'
             var typeArticle = result.split('/')[0] + '/';
             var typeArticleCodes = result.split('/')[0];
             var idArticle = result.split('/')[1];
@@ -153,7 +154,7 @@
                 cantidad: cantArray[index],
                 control: 1,
                 observaciones: observationArray[index],
-                idDestino: selectedDepots,
+                idDestino: selectedDepotsDestino,
                 usuario: userid,
             };
             $.ajax({
@@ -183,7 +184,7 @@
         }else{
             result.items.forEach(function (result, index){
             var url = "/api-stock/public/index.php/stock/register/";
-            var depot = '1/';
+            var depot = selectedDepotsOrigen + '/';
             var typeArticle = result.split('/')[0] + '/';
             var idArticle = result.split('/')[1];
             var typeMove = 'output';
@@ -193,7 +194,7 @@
                 precio: priceArray[index],
                 control: 0,
                 observaciones: observationArray[index],
-                idDestino: selectedDepots,
+                idDestino: selectedDepotsDestino,
                 usuario: userid,
             };
             $.ajax({
@@ -224,7 +225,7 @@
     }
     function listToMove(){
         result.items.forEach(function (result, index){
-        var url = "/api-stock/public/index.php/stock/get/1/";
+        var url = "/api-stock/public/index.php/stock/get/" + selectedDepotsOrigen + "/";
         $.ajax({
             type: "GET",
             url: url + result,
@@ -275,7 +276,8 @@
                     var typeArticle = $(this).parent().parent().find('td').eq(3).html();
                     window.localStorage.setItem("typeArticle", JSON.stringify(typeArticle));
                     window.localStorage.setItem("idArticle", JSON.stringify(idArticle));
-                    window.localStorage.setItem("selectedDepots", JSON.stringify(selectedDepots));
+                    window.localStorage.setItem("selectedDepotsOrigen", JSON.stringify(selectedDepotsOrigen));
+                    window.localStorage.setItem("selectedDepotsDestino", JSON.stringify(selectedDepotsDestino));
                     window.location.href ='../views/code_liberate.php';
                 });
             }

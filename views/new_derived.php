@@ -107,8 +107,12 @@ var selectedCode = "";
         success: function (response) {
             console.log(response);
             $.each(response.result, function (i, item) { 
+                var identUse = item.identificador;
+                if (item.disponible != "SÍ") {
+                    identUse = identUse + " (Utilizado)"
+                }
                 var listCode = `
-                    <option value="${item.identificador}">${item.identificador}</option>`;
+                    <option value="${item.identificador}">${identUse}</option>`;
                 $('#move-codes').append(listCode);
             });
             }
@@ -155,8 +159,12 @@ var selectedCode = "";
         success: function (response) {
             console.log(response);
             $.each(response.result, function (i, item) { 
+                var identUse = item.identificador;
+                if (item.disponible != "SÍ") {
+                    identUse = identUse + " (Utilizado)"
+                }
                 var listCode = `
-                    <option value="${item.identificador}">${item.identificador}</option>`;
+                    <option value="${item.identificador}">${identUse}</option>`;
                 $('#move-codes').append(listCode);
             });
             }

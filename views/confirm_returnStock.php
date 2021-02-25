@@ -84,7 +84,8 @@
 <script src="https://unpkg.com/jspdf-autotable@3.5.3/dist/jspdf.plugin.autotable.js"></script>
 <script>
     var result = JSON.parse(window.localStorage.getItem("result"));
-    var selectedDepots = JSON.parse(window.localStorage.getItem("selectedDepots"));
+    var selectedDepotsOrigen = JSON.parse(window.localStorage.getItem("selectedDepotsOrigen"));
+    var selectedDepotsDestino = JSON.parse(window.localStorage.getItem("selectedDepotsDestino"));
     $(document).ready(function () {
         console.log(result)
         listToMove();
@@ -151,11 +152,11 @@
                 cantidad: cantArray[index],
                 control: 0,
                 observaciones: observationArray[index],
-                idDestino: 1,
+                idDestino: selectedDepotsDestino,
                 usuario: userid,
             };
             $.ajax({
-              url: url + selectedDepots + '/' + typeArticle + typeMove,
+              url: url + selectedDepotsOrigen + '/' + typeArticle + typeMove,
               type: 'POST',
               dataType: 'json',
               data: dataBuy,
@@ -181,7 +182,7 @@
     }
     function listToMove(){
         result.items.forEach(function (result, index){
-        var url = "/api-stock/public/index.php/stock/get/" + selectedDepots + '/';
+        var url = "/api-stock/public/index.php/stock/get/" + selectedDepotsOrigen + '/';
         $.ajax({
             type: "GET",
             url: url + result,
@@ -201,11 +202,11 @@
                         priceItem = response.result[0].precio;
                     }
                     var row = `<tr class="tr-article" idArticle="${response.result[0].idProducto}">
-                    <td> ${response.result[0].Producto} </td> 
-                    <td> ${response.result[0].marca} </td> 
-                    <td> ${response.result[0].descripcion} </td>
+                    <td>${response.result[0].Producto}</td> 
+                    <td>${response.result[0].marca}</td> 
+                    <td>${response.result[0].descripcion}</td>
                     <td class="d-none"> ${response.result[0].tipo} </td>
-                    <td> ${stock} </td>
+                    <td>${stock}</td>
                     <td> <input type="number" name="cant[]" value="" class="cant form-control cant" placeholder="Cant."> </td>
                     <td> <input type="text" name="observation[]" class="observation form-control observation" placeholder="Observacion"> </td> 
                     <td> <input type="number" name="price[]" value="${priceItem}" class="price form-control d-none" placeholder="Precio"> </td>
@@ -221,6 +222,8 @@
                     window.localStorage.setItem("typeArticle", JSON.stringify(typeArticle));
                     window.localStorage.setItem("idArticle", JSON.stringify(idArticle));
                     window.localStorage.setItem("returnCode", JSON.stringify(returnCode));
+                    window.localStorage.setItem("selectedDepotsOrigen", JSON.stringify(selectedDepotsOrigen));
+                    window.localStorage.setItem("selectedDepotsDestino", JSON.stringify(selectedDepotsDestino));
                     window.location.href ='../views/code_liberate.php';
                 });
             }

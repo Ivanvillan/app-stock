@@ -24,14 +24,18 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="inputState">Elige el pañol que devuelve los artículos</label>
-                            <div class="form-group ">
-                                <select class="form-control" name="" id="select-depots">
-                                    <option value="0">Selecciona el pañol</option>
+                            <div class="form-group col-md-6">
+                                <label for="inputState">Elige el deposito origen</label>
+                                <select class="form-control" name="" id="select-depotsOrigen">
+                                    <option value="0">Deposito origen</option>
                                 </select>
                             </div>
-                        </div>
+                            <div class="form-group col-md-6">
+                                <label for="inputState">Elige el deposito destino</label>
+                                <select class="form-control" name="" id="select-depotsDestino">
+                                    <option value="0">Deposito destino</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="form-group col col-md-3">
@@ -67,7 +71,6 @@
                                 <input type="search" id="search" class="form-control" placeholder="Buscador">
                             </div>
                             <div class="col col-md-3 offset-md-3">
-                            <button id="addArticles" class="btn btn-primary float-right">Confirmar</button>
                             </div>
                         </div>
                         <div class="row">
@@ -95,9 +98,14 @@
     </div>
 <script>
 $(document).ready(function () {
-    var selectedDepots = "";
-    $("#select-depots").change(function(){
-        selectedDepots = $(this).children("option:selected").val();
+    var selectedDepotsOrigen = "";
+    var selectedDepotsDestino = "";
+    $("#select-depotsOrigen").change(function(){
+        selectedDepotsOrigen = $(this).children("option:selected").val();
+    });
+    $("#select-depotsDestino").change(function(){
+        selectedDepotsDestino = $(this).children("option:selected").val();
+
     });
     $.ajax({
             url: '/api-stock/public/index.php/depots/get/user/' + userid,
@@ -107,17 +115,31 @@ $(document).ready(function () {
                 console.log(data)
             $.each(data.result, function(index, item) {
                 var users = `<option value="${item.id}">${item.nombre}</option>`;
-                $('#select-depots').append(users);      
+                $('#select-depotsOrigen').append(users);      
             });
             },
             error: function(xhr, textStatus, errorThrown) {
             }
         });
-        $('#select-depots').change(function (e) { 
-            if ($('select[id=select-depots]').val() == $(this).children("option:selected").val()) {
+    $.ajax({
+            url: '/api-stock/public/index.php/depots/get/1/all/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data, textStatus, xhr) {
+                console.log(data)
+            $.each(data.result, function(index, item) {
+                var users = `<option value="${item.id}">${item.nombre}</option>`;
+                $('#select-depotsDestino').append(users);      
+            });
+            },
+            error: function(xhr, textStatus, errorThrown) {
+            }
+        });
+        $('#select-depotsOrigen').change(function (e) { 
+            if ($('select[id=select-depotsOrigen]').val() == $(this).children("option:selected").val()) {
             $.ajax({
                 type: "GET",
-                url: "/api-stock/public/index.php/stock/get/" + selectedDepots + '/all',
+                url: "/api-stock/public/index.php/stock/get/" + selectedDepotsOrigen + '/all',
                 dataType: "json",
                 success: function (data) {
                     let rows = data.result;
@@ -136,51 +158,45 @@ $(document).ready(function () {
                         );
                     }    
                     $('#table-articles>tbody').html(html.join(''));
-                    // console.log(data);
-                    // $.each(data.result, function (i, item) { 
-                    // var row = `<tr class="content" idArticle="${item.idProducto}">
-                    //     <td> ${item.Producto} </td> 
-                    //     <td> ${item.marca} </td> 
-                    //     <td> ${item.detalle} </td> 
-                    //     <td> ${item.descripcion} </td>
-                    //     <td class="typeArticle d-none">${item.tipo}</td>
-                    //     <td id="exist">${item.existencia}</td>
-                    //     <td> ${item.codigos} </td>
-                    //     <td> <input type="checkbox" name="selector[]" class="form-check-input" id="article-check" value=""> </td>
-                    //     </tr>`;
-                    // $('#table-articles>tbody').append(row);
-                    // });
                     $('input[id="article-check"]').click(function () { 
-                        var typeArticle = "";
-                        var result = {items: []};
-                        var i = 0;
-                        $("input[type=checkbox]:checked").each(function(){
-                            var article = $(this)[0].parentElement.parentElement;
-                            var idArticle = $(article).attr('idArticle');
-                            typeArticle = $(this).parent().parent().find('td').eq(4).html();
-                            switch (typeArticle) {
-                            case 'Herramienta':
-                                typeArticle = "tools/"
-                                break;
-                                case 'Equipo':
-                                typeArticle = "hardware/"
-                                break;
-                                case 'Consumible':
-                                typeArticle = "consumables/"
-                                break;
-                                case 'Indumentaria':
-                                typeArticle = "dress/"
-                                break;
+                    var validator = $(this).parent().parent().find('td').eq(4).html();
+                        if (validator <= 0) {
+                            alert('No hay stock del artículo');
+                            $(this).prop( "checked", false );
+                            $(this).prop( "disabled", true );
+                        } else if (selectedDepotsOrigen.length == 0 || selectedDepotsDestino.length == 0){
+                            alert('Seleccione ambos depositos');
+                            $('input[type=checkbox]').prop('checked', false)
+                        } else{
+                            var typeArticle = "";
+                            var result = {items: []};
+                            var i = 0;
+                            $("input[type=checkbox]:checked").each(function(){
+                                var article = $(this)[0].parentElement.parentElement;
+                                var idArticle = $(article).attr('idArticle');
+                                typeArticle = $(this).parent().parent().find('td').eq(3).html();
+                                switch (typeArticle) {
+                                case 'Herramienta':
+                                    typeArticle = "tools/"
+                                    break;
+                                    case 'Equipo':
+                                    typeArticle = "hardware/"
+                                    break;
+                                    case 'Consumible':
+                                    typeArticle = "consumables/"
+                                    break;
+                                    case 'Indumentaria':
+                                    typeArticle = "dress/"
+                                    break;
+                            }
+                                result.items[i] = typeArticle + idArticle;
+                                i++;
+                                window.localStorage.setItem("result", JSON.stringify(result));
+                                window.localStorage.setItem("selectedDepotsOrigen", JSON.stringify(selectedDepotsOrigen));
+                                window.localStorage.setItem("selectedDepotsDestino", JSON.stringify(selectedDepotsDestino));
+                                window.location.href ='../views/confirm_returnStock.php';
+                            });
                         }
-                            result.items[i] = typeArticle + idArticle;
-                            i++;
-                    });
-                    console.log(result);
-                        $('#addArticles').click(function () { 
-                            window.localStorage.setItem("result", JSON.stringify(result));
-                            window.localStorage.setItem("selectedDepots", JSON.stringify(selectedDepots));
-                            window.location.href ='../views/confirm_returnStock.php';
-                        });
                     });
                 }
             });
